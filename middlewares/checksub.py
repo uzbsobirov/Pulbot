@@ -19,7 +19,6 @@ class BigBrother(BaseMiddleware):
         else:
             return
         logging.info(user)
-        result = str()
         markup = types.InlineKeyboardMarkup(row_width=1)
         final_status = True
         for channel in CHANNELS:
@@ -28,9 +27,10 @@ class BigBrother(BaseMiddleware):
             channel = await bot.get_chat(channel)
             invite_link = await channel.export_invite_link()
             if not status:
-                result += f"{invite_link} kanaliga obuna chiqdingiz"
-            markup.insert(types.InlineKeyboardButton(text=channel.title, url=invite_link))
+                result = "<b>Siz bizni homiy kanallardan chiqib ketgansiz❗️\n\nBotdan foydalanish uchun homiy kanallarimizga qayta a'zo bo'ling👇</b>" 
+        markup.insert(types.InlineKeyboardButton(text=channel.title, url=invite_link))
+        markup.insert(types.InlineKeyboardButton(text="A'zo bo'ldim ✅", callback_data='check_subs'))
 
         if not final_status:
-            await update.message.answer(result, disable_web_page_preview=True)
+            await update.message.answer(result, reply_markup=markup, disable_web_page_preview=True)
             raise CancelHandler()

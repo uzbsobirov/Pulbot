@@ -1,4 +1,4 @@
-1) MIDDLEWARE => 50%
+1) MIDDLEWARE => DONE
 2) Phone Number => Loading
 3) Deeplinking => Loading
 4) Balance => Loading
