@@ -48,7 +48,21 @@ class Database:
         full_name VARCHAR(255) NOT NULL,
         username varchar(255) NULL,
         user_id BIGINT NOT NULL UNIQUE,
-        issubs TEXT NULL
+        issubs TEXT NULL,
+        phone TEXT NULL,
+        referal_link TEXT NULL,
+        parent_id BigInt NULL,
+        count BigInt NULL
+        );
+        """
+        await self.execute(sql, execute=True)
+
+
+    async def create_table_ban_users(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS Ban (
+        user_id BIGINT NOT NULL UNIQUE,
+        phone TEXT NULL
         );
         """
         await self.execute(sql, execute=True)
@@ -60,13 +74,25 @@ class Database:
         )
         return sql, tuple(parameters.values())
 
-    async def add_user(self, full_name, username, user_id, issubs):
-        sql = "INSERT INTO users (full_name, username, user_id, issubs) VALUES($1, $2, $3, $4) returning *"
-        return await self.execute(sql, full_name, username, user_id, issubs, fetchrow=True)
+    async def add_user(self, full_name, username, user_id, issubs, referal_link, parent_id, count):
+        sql = "INSERT INTO users (full_name, username, user_id, issubs, referal_link, parent_id, count) VALUES($1, $2, $3, $4, $5, $6, $7) returning *"
+        return await self.execute(sql, full_name, username, user_id, issubs, referal_link, parent_id, count, fetchrow=True)
+
+    async def add_ban_user(self, user_id, phone):
+        sql = "INSERT INTO ban (user_id, phone) VALUES($1, $2) returning *"
+        return await self.execute(sql, user_id, phone, fetchrow=True)
 
     async def select_all_users(self):
         sql = "SELECT * FROM Users"
         return await self.execute(sql, fetch=True)
+
+    async def select_one_users(self, user_id):
+        sql = "SELECT * FROM Users WHERE user_id=$1"
+        return await self.execute(sql, user_id, fetch=True)
+
+    async def select_one_ban_user(self, user_id):
+        sql = "SELECT * FROM Ban WHERE user_id=$1"
+        return await self.execute(sql, user_id, fetch=True)
 
     async def select_user(self, **kwargs):
         sql = "SELECT * FROM Users WHERE "
@@ -80,6 +106,18 @@ class Database:
     async def update_user_username(self, username, telegram_id):
         sql = "UPDATE Users SET username=$1 WHERE telegram_id=$2"
         return await self.execute(sql, username, telegram_id, execute=True)
+
+    async def update_count(self, user_id):
+        sql = "UPDATE Users SET count=count+1 WHERE user_id=$1"
+        return await self.execute(sql, user_id, execute=True)
+    
+    async def update_user_phone(self, phone, user_id):
+        sql = "UPDATE Users SET phone=$1 WHERE user_id=$2"
+        return await self.execute(sql, phone, user_id, execute=True)
+
+    async def update_user_subs(self, issubs, user_id):
+        sql = "UPDATE Users SET issubs=$1 WHERE user_id=$2"
+        return await self.execute(sql, issubs, user_id, execute=True)
 
     async def delete_users(self):
         await self.execute("DELETE FROM Users WHERE TRUE", execute=True)
