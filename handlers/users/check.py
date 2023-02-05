@@ -32,6 +32,7 @@ async def check_user_subs(call: types.CallbackQuery, state: FSMContext):
     result.add(InlineKeyboardButton(text="✅ Obunani tekshirish", callback_data='check_subs'))
     
     if final_status:
+        await call.message.delete()
         text = f"<b>{call.from_user.full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇</b>"
         await call.message.answer(text=text, reply_markup=main)
         await state.finish()
