@@ -16,6 +16,8 @@ async def bot_start(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     referal_link = await get_start_link(str(user_id))
     args = message.get_args()
+    print(args)
+    
 
     # Foydalanuvchi bazada bo'lsa faqat adminga xabar beramiz aks xolda bazafa qo'shib keyin adminga xabar beramiz
     try:
@@ -28,7 +30,8 @@ async def bot_start(message: types.Message, state: FSMContext):
                 issubs='false',
                 referal_link=referal_link,
                 parent_id=164654,
-                count=0
+                count=0,
+                balance=0
             )
         else:
             user = await db.add_user(
@@ -38,9 +41,13 @@ async def bot_start(message: types.Message, state: FSMContext):
                 issubs='false',
                 referal_link=referal_link,
                 parent_id=int(args),
-                count=0
-            )                    
-            await db.update_count(user_id=int(args))
+                count=0,
+                balance=0
+            )                   
+            await state.update_data(
+                {'args': int(args)}
+            ) 
+
         # ADMINGA xabar beramiz
         count = await db.count_users()
         msg = f"@{user[2]} bazaga qo'shildi.\nBazada {count} ta foydalanuvchi bor."
@@ -64,6 +71,10 @@ async def bot_start(message: types.Message, state: FSMContext):
         await message.answer(text=text, reply_markup=markup, disable_web_page_preview=True)
         await state.finish()
     else:
+        answer = f"{full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
+        await message.answer(text=answer, reply_markup=main)
+        await state.finish()
+        
         answer = f"{full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
         await message.answer(text=answer, reply_markup=main)
         await state.finish()

@@ -52,7 +52,8 @@ class Database:
         phone TEXT NULL,
         referal_link TEXT NULL,
         parent_id BigInt NULL,
-        count BigInt NULL
+        count BigInt NULL,
+        balance BigInt NULL
         );
         """
         await self.execute(sql, execute=True)
@@ -74,9 +75,9 @@ class Database:
         )
         return sql, tuple(parameters.values())
 
-    async def add_user(self, full_name, username, user_id, issubs, referal_link, parent_id, count):
-        sql = "INSERT INTO users (full_name, username, user_id, issubs, referal_link, parent_id, count) VALUES($1, $2, $3, $4, $5, $6, $7) returning *"
-        return await self.execute(sql, full_name, username, user_id, issubs, referal_link, parent_id, count, fetchrow=True)
+    async def add_user(self, full_name, username, user_id, issubs, referal_link, parent_id, count, balance):
+        sql = "INSERT INTO users (full_name, username, user_id, issubs, referal_link, parent_id, count, balance) VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning *"
+        return await self.execute(sql, full_name, username, user_id, issubs, referal_link, parent_id, count, balance, fetchrow=True)
 
     async def add_ban_user(self, user_id, phone):
         sql = "INSERT INTO ban (user_id, phone) VALUES($1, $2) returning *"
@@ -110,6 +111,10 @@ class Database:
     async def update_count(self, user_id):
         sql = "UPDATE Users SET count=count+1 WHERE user_id=$1"
         return await self.execute(sql, user_id, execute=True)
+
+    async def update_balance_count(self, user_id):
+        sql = "UPDATE Users SET balance=balance+350 WHERE user_id=$1"
+        return await self.execute(sql, user_id, execute=True)
     
     async def update_user_phone(self, phone, user_id):
         sql = "UPDATE Users SET phone=$1 WHERE user_id=$2"
@@ -118,6 +123,10 @@ class Database:
     async def update_user_subs(self, issubs, user_id):
         sql = "UPDATE Users SET issubs=$1 WHERE user_id=$2"
         return await self.execute(sql, issubs, user_id, execute=True)
+
+    async def update_user_balance(self, balance, user_id):
+        sql = "UPDATE Users SET balance=$1 WHERE user_id=$2"
+        return await self.execute(sql, balance, user_id, execute=True)
 
     async def delete_users(self):
         await self.execute("DELETE FROM Users WHERE TRUE", execute=True)
