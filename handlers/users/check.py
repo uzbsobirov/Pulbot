@@ -42,7 +42,7 @@ async def check_user_subs(call: types.CallbackQuery, state: FSMContext):
             andoza = "(?:\+[9]{2}[8][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{2})"
             if re.match(andoza, phone):
                 data = await state.get_data()
-                args = data.get('args')
+                args = data.get('arg')
                 print(args)
                 # if args == '':
                 await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)

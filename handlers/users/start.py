@@ -16,7 +16,7 @@ async def bot_start(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     referal_link = await get_start_link(str(user_id))
     args = message.get_args()
-    print(args)
+    
     
 
     # Foydalanuvchi bazada bo'lsa faqat adminga xabar beramiz aks xolda bazafa qo'shib keyin adminga xabar beramiz
@@ -44,9 +44,8 @@ async def bot_start(message: types.Message, state: FSMContext):
                 count=0,
                 balance=0
             )                   
-            await state.update_data(
-                {'args': int(args)}
-            ) 
+            await state.update_data(arg=int(args)) 
+            print(args)
 
         # ADMINGA xabar beramiz
         count = await db.count_users()
