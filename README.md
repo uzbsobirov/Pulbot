@@ -10,6 +10,8 @@ $ python -m venv venv
 4. Activate venv:
 ```
 $ source venv/Scripts/activate #Windows
+```
+```
 $ source venv/bin/activate #macOS or Linux
 ```
 ```
