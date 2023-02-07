@@ -53,7 +53,8 @@ class Database:
         referal_link TEXT NULL,
         parent_id BigInt NULL,
         count BigInt NULL,
-        balance BigInt NULL
+        balance BigInt NULL,
+        wallet TEXT NULL
         );
         """
         await self.execute(sql, execute=True)
@@ -75,9 +76,9 @@ class Database:
         )
         return sql, tuple(parameters.values())
 
-    async def add_user(self, full_name, username, user_id, issubs, referal_link, parent_id, count, balance):
-        sql = "INSERT INTO users (full_name, username, user_id, issubs, referal_link, parent_id, count, balance) VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning *"
-        return await self.execute(sql, full_name, username, user_id, issubs, referal_link, parent_id, count, balance, fetchrow=True)
+    async def add_user(self, full_name: str, username: str, user_id: int, issubs: str, referal_link: str, parent_id: int, count: int, balance: int, wallet: str = None):
+        sql = "INSERT INTO users (full_name, username, user_id, issubs, referal_link, parent_id, count, balance, wallet) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) returning *"
+        return await self.execute(sql, full_name, username, user_id, issubs, referal_link, parent_id, count, balance, wallet, fetchrow=True)
 
     async def add_ban_user(self, user_id, phone):
         sql = "INSERT INTO ban (user_id, phone) VALUES($1, $2) returning *"
@@ -119,6 +120,10 @@ class Database:
     async def update_user_phone(self, phone, user_id):
         sql = "UPDATE Users SET phone=$1 WHERE user_id=$2"
         return await self.execute(sql, phone, user_id, execute=True)
+
+    async def update_user_wallet(self, wallet, user_id):
+        sql = "UPDATE Users SET wallet=$1 WHERE user_id=$2"
+        return await self.execute(sql, wallet, user_id, execute=True)
 
     async def update_user_subs(self, issubs, user_id):
         sql = "UPDATE Users SET issubs=$1 WHERE user_id=$2"

@@ -1,12 +1,14 @@
+import re
 import asyncpg
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
 from loader import dp, db, bot
 from data.config import ADMINS, CHANNELS
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.dispatcher import FSMContext
 from keyboards.default.main import main
 from aiogram.utils.deep_linking import get_start_link
+from states.starting import Starting
 
 
 @dp.message_handler(CommandStart(), state='*')
@@ -29,9 +31,10 @@ async def bot_start(message: types.Message, state: FSMContext):
                 username=username,
                 issubs='false',
                 referal_link=referal_link,
-                parent_id=164654,
+                parent_id=None,
                 count=0,
-                balance=0
+                balance=0,
+                wallet=None
             )
         else:
             user = await db.add_user(
@@ -42,10 +45,9 @@ async def bot_start(message: types.Message, state: FSMContext):
                 referal_link=referal_link,
                 parent_id=int(args),
                 count=0,
-                balance=0
-            )                   
-            await state.update_data(arg=int(args)) 
-            print(args)
+                balance=0,
+                wallet=None
+            )
 
         # ADMINGA xabar beramiz
         count = await db.count_users()
@@ -70,10 +72,40 @@ async def bot_start(message: types.Message, state: FSMContext):
         await message.answer(text=text, reply_markup=markup, disable_web_page_preview=True)
         await state.finish()
     else:
-        answer = f"{full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
-        await message.answer(text=answer, reply_markup=main)
-        await state.finish()
-        
-        answer = f"{full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
-        await message.answer(text=answer, reply_markup=main)
-        await state.finish()
+        phone = datas[0][5]
+        if phone is None or phone == '' or phone == ([], {}, ()):
+            # Foydalananuvchi telefon raqamini olish uchun handler
+            @dp.message_handler(content_types=types.ContentTypes.CONTACT, state=Starting.phone)
+            async def phone_number(message: types.Message, state: FSMContext):
+                user_id = message.from_user.id
+                phone = message.contact.phone_number
+                andoza1 = "(?:\+[9]{2}[8][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{2})"
+                andoza2 = "(?:\+[9]{2}[8][7]{2}[0-9]{3}[0-9]{2}[0-9]{2})"
+                if re.match(andoza1, phone) or re.match(andoza2, phone):
+                    save = await db.update_user_phone(phone=phone, user_id=message.from_user.id)
+                    user = await db.select_one_users(user_id=user_id)
+                    args = user[0][7]
+                    print(f"{args} ino args")
+                    if args is None or args == '' or args == ([], (), {}):
+                        await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
+                        await state.finish()
+                    else:
+                        await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
+                        await db.update_count(user_id=args)
+                        await db.update_balance_count(user_id=args)
+                        await bot.send_message(chat_id=args, text="<b>Sizning hisobingizga 350 so'm qo'shildi✅</b>")
+                        await state.finish()
+                else:
+                    # Agar user malumoti bazada bo'lsa
+                    try:
+                        await message.answer("<b>Siz bloklandingiz. Botdan faqat O'zbekiston fuqarolari foydalanishi mumkin❗️</b>", reply_markup=ReplyKeyboardRemove())
+                        ban = await db.add_ban_user(user_id=message.from_user.id, phone=phone)
+                        await state.finish()
+                    except asyncpg.exceptions.UniqueViolationError:
+                        await message.answer("<b>Siz bloklandingiz. Botdan faqat O'zbekiston fuqarolari foydalanishi mumkin❗️</b>", reply_markup=ReplyKeyboardRemove())
+                        await state.finish()
+        else:
+            answer = f"{full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
+            await message.answer(text=answer, reply_markup=main)
+            await state.finish()
+
