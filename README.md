@@ -7,6 +7,11 @@ This is a simple money bot using aiogram and PostgreSQL as database
 2. Create virtualenv:
 ```
 $ python -m venv venv
+4. Activate venv:
+```
+$ source venv/Scripts/activate #Windows
+$ source venv/bin/activate #macOS or Linux
+```
 ```
 3. Install requirements using: 
 ```
