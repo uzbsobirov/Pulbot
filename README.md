@@ -27,4 +27,4 @@ DB_NAME=your_db_name
 $ python app.py
 ```
 
-6. Add your logic to own bot, it's up to you!
+7. Add your logic to own bot, it's up to you!
