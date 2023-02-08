@@ -26,7 +26,7 @@ async def pulishlash(message: types.Message, state: FSMContext):
         wallet = user[0][10]
         phone = user[0][5]
         if wallet is not None:
-            text = f"<b>💰Hisobingiz: <code>{balans}</code> so'm\n👥Taklif qilgan do'stlaringiz: <code>{ref_count}</code> odam\n📱Hisob raqamingiz: <code>{wallet}</code></b>"
+            text = f"<b>💰Hisobingiz: <code>{balans}</code> so'm\n📱Hisob raqamingiz: <code>{wallet}</code></b>"
             await message.reply(text=text, reply_markup=balance)
             await state.finish()
         else:
@@ -58,13 +58,13 @@ async def rozilik(call: types.CallbackQuery, state: FSMContext):
         await call.answer(text="Pulni olish uchun hisobingizda mablag' yetarli emas❗️\n\nPulni olish hisobingizda eng kamida 4000 so'm pul bo'lishi kerak💰", show_alert=True)
     else:
         await call.message.delete()
-        text = "<b>So'rovingizni qabul qilindi✅\n\nPul hisobingizga 10 daqiqa ichida tushadi⚡️</b>"
+        text = "<b>So'rovingizni qabul qilindi✅\n\nPul hisobingizga 10 daqiqa ichida shadily⚡️</b>"
         admin_text = f"<b>#RecieveRequest\n\n🆔 <code>{user_id}</code>\n👤 {user_data}\n📲 Raqam: <code>{phone}</code>\n💰 Summa: <code>{balans}</code> so'm</b>"
         await bot.send_message(chat_id=-1001628560121, text=admin_text, reply_markup=recieve)
         await call.message.answer(text=text)
         await state.finish()
 
-# Agar foydalanuvchi adminga hisobidagi pulni chiqarish uchun so'rov yuborsa va admin buni tasdiqlasa...
+# Agar foydalanuvchi adminga hisobidagi pulni chiqarish uchun so'rov yuborsa va admin uni tasdiqlasa...
 @dp.callback_query_handler(text="tolandi", state='*')
 async def pul_tolandi(call: types.CallbackQuery, state: FSMContext):
     await call.message.delete()
@@ -72,17 +72,14 @@ async def pul_tolandi(call: types.CallbackQuery, state: FSMContext):
     user_data = call.from_user.get_mention("Pul oluvchi", as_html=True)
     data = call.message.text.split('\n')
     step1 = data[2].split(' ')
-    step2 = data[5].split(':')
     user_id = step1[1]
-    # balans = step2[1]
 
 
     user = await db.select_one_users(user_id=int(user_id))
     balans = user[0][-2]
     phone = user[0][5]
     await db.update_user_balance(balance=0, user_id=int(user_id))
-    admin_text = f"<b>#tolov\n\n👤 {user_data}\n📲 Raqam: <code>{phone}</code>\n💰 Summa: <code>{balans}</code>\n\n</b>" \
-                    "<b><i>✅ Muvaffaqiyatli o'tkazildi</i></b>\n\n<b>@Puldorkubot</b>"
+    admin_text = f"<b>#tolov\n\n👤 {user_data}\n📲 Raqam: <code>{phone}</code>\n💰 Summa: <code>{balans}</code>\n\n<i>✅ Muvaffaqiyatli o'tkazildi</i>\n\n@Puldorkubot</b>"
     await bot.send_message(chat_id=-1001828522631, text=admin_text)
     text = "Pulingiz hisobingizga o'tkazildi✅, iltimos hisobingizni tekshiring❗️"
     await bot.send_message(chat_id=user_id, text=text)
@@ -97,8 +94,7 @@ async def hisob_raqam(call: types.CallbackQuery, state: FSMContext):
     await state.update_data(
         {'user_id': user_id}
     )
-    text = "<b>Pul o'tkazish kerak bo'lgan telefon raqamingizni yoki karta raqamingizni kiriting</b>\n\n" \
-        "<b>Namuna:\nTelefon raqam: <code>+998912345678</code>\nKarta raqam: <code>8600111122223333</code></b>"
+    text = "<b>Pul o'tkazish kerak bo'lgan telefon raqamingizni yoki karta raqamingizni kiriting\n\nNamuna:\nTelefon raqam: <code>+998912345678</code>\nKarta raqam: <code>8600111122223333</code></b>"
     await call.message.edit_text(text=text, reply_markup=cancel)
     await Hisobraqam.hisobraqam.set()
 
@@ -122,9 +118,8 @@ async def new_hisob_raqam(message: types.Message, state: FSMContext):
         await message.reply("Karta raqamingiz muvaffaqiyatli kiritildi. ✅", reply_markup=main)
         await state.finish()
     else:
-        # Agar user kiritgan hisob raqam yaroqsiz bo'lsa `state` ni `reset` qilamiz va boshqa hisob raqam kiritishini so'raymiz
-        text = "<b>Iltimos telefon raqamingiz yoki karta raqamingizni namunadagiday yuboring❗️\n\n</b>" \
-                    "<b>Namuna (Telefon raqam uchun): <code>+998912345678</code>\n</b>" \
-                    "<b>Namuna (Karta raqam uchun): <code>8600111122223333</code></b>"
+        # Agar user kiritgan hisob raqam yaroqsiz bo'lsa `state` ni `reset` qilamiz va boshqa hisob raqam kiritishini
+        #                                                                                                   so'raymiz
+        text = "<b>Iltimos telefon raqamingiz yoki karta raqamingizni namunadagiday yuboring❗️\n\nNamuna (Telefon raqam uchun): <code>+998912345678</code>\nNamuna (Karta raqam uchun): <code>8600111122223333</code></b>"
         await message.reply(text=text)
         await Hisobraqam.hisobraqam.set()

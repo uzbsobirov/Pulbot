@@ -40,20 +40,20 @@ async def check_user_subs(call: types.CallbackQuery, state: FSMContext):
         async def phone_number(message: types.Message, state: FSMContext):
             user_id = message.from_user.id
             phone = message.contact.phone_number
-            andoza1 = "(?:\+[9]{2}[8][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{2})"
-            andoza2 = "(?:\+[9]{2}[8][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{2})"
-            if re.match(andoza1, phone) or re.match(andoza2, phone):
+
+            if (len(phone) == 13 or len(phone) == 12) and (phone.startswith('+998') or phone.startswith('998')):
                 save = await db.update_user_phone(phone=phone, user_id=message.from_user.id)
                 user = await db.select_one_users(user_id=user_id)
                 args = user[0][7]
-                if args is None or args == '' or args == ([], (), {}):
-                    await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
-                    await state.finish()
-                else:
+                if args:
                     await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
                     await db.update_count(user_id=args)
                     await db.update_balance_count(user_id=args)
                     await bot.send_message(chat_id=args, text="<b>Sizning hisobingizga 350 so'm qo'shildi✅</b>")
+                    await state.finish()
+
+                else:
+                    await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
                     await state.finish()
             else:
                 # Agar user malumoti bazada bo'lsa

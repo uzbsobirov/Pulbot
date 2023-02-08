@@ -5,3 +5,5 @@ from . import check
 from . import pulishlash
 from . import balans
 from . import pulyechish
+from . import statistika
+from . import reklama
