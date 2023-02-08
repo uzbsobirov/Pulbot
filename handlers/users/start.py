@@ -79,9 +79,12 @@ async def bot_start(message: types.Message, state: FSMContext):
             async def phone_number(message: types.Message, state: FSMContext):
                 user_id = message.from_user.id
                 phone = message.contact.phone_number
-                andoza1 = "(?:\+[9]{2}[8][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{2})"
-                andoza2 = "(?:\+[9]{2}[8][7]{2}[0-9]{3}[0-9]{2}[0-9]{2})"
-                if re.match(andoza1, phone) or re.match(andoza2, phone):
+
+                # user raqamini RegEx orqali yaroqli ekanini tekshiramiz
+                andoza1 = "(?:\+[9]{2}[8][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{2})" # For startswith='99, 97, 90, 91, 94, 95'
+                andoza2 = "(?:\+[9]{2}[8][7]{2}[0-9]{3}[0-9]{2}[0-9]{2})" # For startswith='77'
+                andoza3 = "(?:\+[9]{2}[8][8]{2}[0-9]{3}[0-9]{2}[0-9]{2})" # For startswith='88'
+                if re.match(andoza1, phone) or re.match(andoza2, phone) or re.match(andoza3, phone):
                     save = await db.update_user_phone(phone=phone, user_id=message.from_user.id)
                     user = await db.select_one_users(user_id=user_id)
                     args = user[0][7]

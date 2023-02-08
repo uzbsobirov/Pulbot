@@ -67,25 +67,33 @@ async def rozilik(call: types.CallbackQuery, state: FSMContext):
 # Agar foydalanuvchi adminga hisobidagi pulni chiqarish uchun so'rov yuborsa va admin buni tasdiqlasa...
 @dp.callback_query_handler(text="tolandi", state='*')
 async def pul_tolandi(call: types.CallbackQuery, state: FSMContext):
+    await call.message.delete()
     # full_name = call.from_user.full_name
     user_data = call.from_user.get_mention("Pul oluvchi", as_html=True)
-    call = call.message.text.split('\n')
-    step1 = call[2].split(' ')
+    data = call.message.text.split('\n')
+    step1 = data[2].split(' ')
+    step2 = data[5].split(':')
     user_id = step1[1]
+    # balans = step2[1]
+
 
     user = await db.select_one_users(user_id=int(user_id))
-    balans = user[0][-1]
+    balans = user[0][-2]
     phone = user[0][5]
     await db.update_user_balance(balance=0, user_id=int(user_id))
-    text = "<b>So'rovingizni qabul qilindi✅\n\nPul hisobingizga 10 daqiqa ichida tushadi⚡️</b>"
-    admin_text = f"<b>#tolov\n\n👤 {user_data}\n📲 Raqam: <code>{phone}</code>\n💰 Summa: <code>{balans}</code> so'm</b>"
+    admin_text = f"<b>#tolov\n\n👤 {user_data}\n📲 Raqam: <code>{phone}</code>\n💰 Summa: <code>{balans}</code>\n\n</b>" \
+                    "<b><i>✅ Muvaffaqiyatli o'tkazildi</i></b>\n\n<b>@Puldorkubot</b>"
     await bot.send_message(chat_id=-1001828522631, text=admin_text)
-    await call.message.answer(text=text)
+    text = "Pulingiz hisobingizga o'tkazildi✅, iltimos hisobingizni tekshiring❗️"
+    await bot.send_message(chat_id=user_id, text=text)
     await state.finish()
 
+
+# Hisob raqam qo'shish yoki yangilash uchun handler
 @dp.callback_query_handler(text="hisobraqam", state='*')
 async def hisob_raqam(call: types.CallbackQuery, state: FSMContext):
     user_id = call.from_user.id
+    # Foydalanuvchi id sini olaman `state` orqali
     await state.update_data(
         {'user_id': user_id}
     )
@@ -94,14 +102,18 @@ async def hisob_raqam(call: types.CallbackQuery, state: FSMContext):
     await call.message.edit_text(text=text, reply_markup=cancel)
     await Hisobraqam.hisobraqam.set()
 
+# Foydalanuvchi habarini olish uchun state ni set qilamiz
 @dp.message_handler(state=Hisobraqam.hisobraqam)
 async def new_hisob_raqam(message: types.Message, state: FSMContext):
     data = await state.get_data()
     user_id = data.get('user_id')
     msg = message.text
-    andoza1 = "(?:\+[9]{2}[8][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{2})"
-    andoza2 = "(?:\+[9]{2}[8][7]{2}[0-9]{3}[0-9]{2}[0-9]{2})"
-    if re.match(andoza1, msg) or re.match(andoza2, msg):
+
+    # Agar foydalanuvchi hisob raqamga telefon raqam kiritishni xoxlasa RegEx dan foydalanamiz
+    andoza1 = "(?:\+[9]{2}[8][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{2})" # For startswith='99, 97, 90, 91, 94, 95'
+    andoza2 = "(?:\+[9]{2}[8][7]{2}[0-9]{3}[0-9]{2}[0-9]{2})" # For startswith='77'
+    andoza3 = "(?:\+[9]{2}[8][8]{2}[0-9]{3}[0-9]{2}[0-9]{2})" # For startswith='88'
+    if re.match(andoza1, msg) or re.match(andoza2, msg) or re.match(andoza3, msg):
         await db.update_user_wallet(wallet=msg, user_id=user_id)
         await message.reply("Telefon raqamingiz muvaffaqiyatli kiritildi. ✅", reply_markup=main)
         await state.finish()
@@ -110,6 +122,7 @@ async def new_hisob_raqam(message: types.Message, state: FSMContext):
         await message.reply("Karta raqamingiz muvaffaqiyatli kiritildi. ✅", reply_markup=main)
         await state.finish()
     else:
+        # Agar user kiritgan hisob raqam yaroqsiz bo'lsa `state` ni `reset` qilamiz va boshqa hisob raqam kiritishini so'raymiz
         text = "<b>Iltimos telefon raqamingiz yoki karta raqamingizni namunadagiday yuboring❗️\n\n</b>" \
                     "<b>Namuna (Telefon raqam uchun): <code>+998912345678</code>\n</b>" \
                     "<b>Namuna (Karta raqam uchun): <code>8600111122223333</code></b>"

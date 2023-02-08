@@ -1,7 +1,7 @@
 1) MIDDLEWARE => DONE
 2) Phone Number => 92%
 3) Make Money => DONE
-4) Balance => 80%
+4) Balance => DONE
 5) Withdraw Money => Loading
 6) Pay History => Loading
 7) Manual => Loading
