@@ -4,6 +4,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from data.config import ADMINS
 from states.control import Control
+from keyboards.inline.panel import control_balans
 
 # Handler for `👤 Foydalanuvchini boshqarish`
 @dp.message_handler(text="👤 Foydalanuvchini boshqarish", state='*', user_id=ADMINS[0])
@@ -39,32 +40,50 @@ async def controluser(message: types.Message, state: FSMContext):
                         text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
                         text += f"<b>📲: <code>Mavjud emas</code>\n🚷: ✅A'zo bo'lgan\n⛓: {referal_link}\n👨🏻‍🦳: <code>Mavjud emas</code>\n🔢: {count}\n💰: {balance}\n</b>"
                         text += f"<b>💳: <code>Mavjud emas</code></b>"
-                        await message.answer(text=text, disable_web_page_preview=True)
+                        await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                         await state.finish()
                     else:
                         text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
                         text += f"<b>📲: <code>Mavjud emas</code>\n🚷: ❌A'zo bo'lmagan\n⛓: {referal_link}\n👨🏻‍🦳: <code>Mavjud emas</code>\n🔢: {count}\n💰: {balance}\n</b>"
                         text += f"<b>💳: <code>Mavjud emas</code></b>"
-                        await message.answer(text=text, disable_web_page_preview=True)
+                        await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                         await state.finish()
                 else:
                     text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
                     text += f"<b>📲: <code>Mavjud emas</code>\n🚷: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
                     text += f"<b>💳: <code>Mavjud emas</code></b>"
-                    await message.answer(text=text, disable_web_page_preview=True)
+                    await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                     await state.finish()
             else:
                 text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
                 text += f"<b>📲: {phone}\n🚷: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
                 text += f"<b>💳: {wallet}</b>"
-                await message.answer(text=text, disable_web_page_preview=True)
+                await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                 await state.finish()
         else:
             text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
             text += f"<b>📲: {phone}\n🚷: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
             text += f"<b>💳: {wallet}</b>"
-            await message.answer(text=text, disable_web_page_preview=True)
+            await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
             await state.finish()
     else:
         await message.answer(text="Iltimos, faqat sonlardan foydalaning❗️")
         await Control.control.set()
+
+@dp.callback_query_handler(text="qoshish", state='*')
+async def pul_qoshish(call: types.CallbackQuery, state: FSMContext):
+    await call.message.answer(text="<b>Foydalanuvchi balansiga nech pul qo'shmoqchisiz?</b>")
+    user_id = call.message.text.split('\n')[2].split(': ')[1]
+    await state.update_data(
+        {'user_id': user_id}
+    )
+    await Control.add.set()
+
+@dp.message_handler(state=Control.add)
+async def state_add(message: types.Message, state: FSMContext):
+    text = message.text
+    data = await state.get_data()
+    user_id = data.get('user_id')
+
+    user = await db.select_one_users(user_id=int(user_id))
+    print(user, text)
