@@ -108,6 +108,10 @@ class Database:
     async def update_user_username(self, username, telegram_id):
         sql = "UPDATE Users SET username=$1 WHERE telegram_id=$2"
         return await self.execute(sql, username, telegram_id, execute=True)
+    
+    async def update_user_balans(self, balance, user_id):
+        sql = "UPDATE Users SET balance=$1 WHERE telegram_id=$2"
+        return await self.execute(sql, balance, user_id, execute=True)
 
     async def update_count(self, user_id):
         sql = "UPDATE Users SET count=count+1 WHERE user_id=$1"

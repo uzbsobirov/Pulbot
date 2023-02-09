@@ -85,5 +85,7 @@ async def state_add(message: types.Message, state: FSMContext):
     data = await state.get_data()
     user_id = data.get('user_id')
 
-    user = await db.select_one_users(user_id=int(user_id))
-    print(user, text)
+    # user = await db.select_one_users(user_id=int(user_id))
+    # balans = user[0][9]
+    await db.update_user_balance(balance=int(text), user_id=int(user_id))
+    print("Update")
