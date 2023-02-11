@@ -15,3 +15,21 @@ main = ReplyKeyboardMarkup(
         ]
     ], resize_keyboard=True, one_time_keyboard=True
 )
+
+main_admin = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="Pul ishlash 💸")],
+        [
+            KeyboardButton(text="Balans 💰"),
+            KeyboardButton(text="Pul yechish 💳")
+        ],
+        [KeyboardButton(text="To'lovlar tarixi 🧾")],
+        [
+            KeyboardButton(text="Qo'llanma 📄"),
+            KeyboardButton(text="Top 📊")
+        ],
+        [
+            KeyboardButton(text="💻 Admin panel")
+        ]
+    ], resize_keyboard=True, one_time_keyboard=True
+)

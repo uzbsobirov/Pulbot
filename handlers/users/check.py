@@ -3,7 +3,7 @@ import asyncpg
 from loader import dp, bot, db
 from aiogram import types
 from keyboards.default.main import main
-from data.config import CHANNELS
+from data.config import CHANNELS, ADMINS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.dispatcher import FSMContext
 from utils.misc.subscription import check

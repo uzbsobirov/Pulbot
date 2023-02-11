@@ -1,12 +1,8 @@
-import re
-from loader import db, dp, bot
+from loader import db, dp
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import ReplyKeyboardRemove
-from keyboards.inline.balance import balance, pulyechish, cancel
-from keyboards.inline.recieve import recieve
-from keyboards.default.main import main
-from states.hisobraqam import Hisobraqam
+from keyboards.inline.balance import pulyechish
 
 # Handler for `Pul yechish 💳`
 @dp.message_handler(text="Pul yechish 💳", state='*')
