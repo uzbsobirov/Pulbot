@@ -69,6 +69,17 @@ class Database:
         """
         await self.execute(sql, execute=True)
 
+    async def create_table_admin_panel(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS Admin (
+        tolovtarixi TEXT NULL,
+        qollanma TEXT NULL,
+        top TEXT NULL,
+        
+        );
+        """
+        await self.execute(sql, execute=True)
+
     @staticmethod
     def format_args(sql, parameters: dict):
         sql += " AND ".join(
@@ -83,6 +94,10 @@ class Database:
     async def add_ban_user(self, user_id, phone):
         sql = "INSERT INTO ban (user_id, phone) VALUES($1, $2) returning *"
         return await self.execute(sql, user_id, phone, fetchrow=True)
+
+    async def add_user_to_ban(self, user_id):
+        sql = "INSERT INTO ban (user_id) VALUES($1) returning *"
+        return await self.execute(sql, user_id, fetchrow=True)
 
     async def select_all_users(self):
         sql = "SELECT * FROM Users"
@@ -133,9 +148,25 @@ class Database:
         sql = "UPDATE Users SET issubs=$1 WHERE user_id=$2"
         return await self.execute(sql, issubs, user_id, execute=True)
 
-    async def update_user_balance(self, balance, user_id):
-        sql = "UPDATE Users SET balance=$1 WHERE user_id=$2"
-        return await self.execute(sql, balance, user_id, execute=True)
+    async def add_user_balance(self, user_id, miqdor):
+        select_sql = "SELECT * FROM Users WHERE user_id=$1"
+        result = await self.execute(select_sql, user_id, fetch=True)
+
+        if result:
+            balans = result[0][9]
+            balans += miqdor
+            sql = f"UPDATE Users SET balance={balans} WHERE user_id=$1"
+            return await self.execute(sql, user_id, execute=True)
+
+    async def subtraction_user_balance(self, user_id, miqdor):
+        select_sql = "SELECT * FROM Users WHERE user_id=$1"
+        result = await self.execute(select_sql, user_id, fetch=True)
+
+        if result:
+            balans = result[0][9]
+            balans -= miqdor
+            sql = f"UPDATE Users SET balance={balans} WHERE user_id=$1"
+            return await self.execute(sql, user_id, execute=True)
 
     async def delete_users(self):
         await self.execute("DELETE FROM Users WHERE TRUE", execute=True)

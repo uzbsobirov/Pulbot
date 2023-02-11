@@ -38,31 +38,31 @@ async def controluser(message: types.Message, state: FSMContext):
                 if parent_id is None:
                     if issubs == 'true':
                         text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
-                        text += f"<b>📲: <code>Mavjud emas</code>\n🚷: ✅A'zo bo'lgan\n⛓: {referal_link}\n👨🏻‍🦳: <code>Mavjud emas</code>\n🔢: {count}\n💰: {balance}\n</b>"
+                        text += f"<b>📲: <code>Mavjud emas</code>\n〽️: ✅A'zo bo'lgan\n⛓: {referal_link}\n👨🏻‍🦳: <code>Mavjud emas</code>\n🔢: {count}\n💰: {balance}\n</b>"
                         text += f"<b>💳: <code>Mavjud emas</code></b>"
                         await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                         await state.finish()
                     else:
                         text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
-                        text += f"<b>📲: <code>Mavjud emas</code>\n🚷: ❌A'zo bo'lmagan\n⛓: {referal_link}\n👨🏻‍🦳: <code>Mavjud emas</code>\n🔢: {count}\n💰: {balance}\n</b>"
+                        text += f"<b>📲: <code>Mavjud emas</code>\n〽️: ❌A'zo bo'lmagan\n⛓: {referal_link}\n👨🏻‍🦳: <code>Mavjud emas</code>\n🔢: {count}\n💰: {balance}\n</b>"
                         text += f"<b>💳: <code>Mavjud emas</code></b>"
                         await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                         await state.finish()
                 else:
                     text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
-                    text += f"<b>📲: <code>Mavjud emas</code>\n🚷: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
+                    text += f"<b>📲: <code>Mavjud emas</code>\n〽️: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
                     text += f"<b>💳: <code>Mavjud emas</code></b>"
                     await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                     await state.finish()
             else:
                 text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
-                text += f"<b>📲: {phone}\n🚷: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
+                text += f"<b>📲: {phone}\n〽️: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
                 text += f"<b>💳: {wallet}</b>"
                 await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                 await state.finish()
         else:
             text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
-            text += f"<b>📲: {phone}\n🚷: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
+            text += f"<b>📲: {phone}\n〽️: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
             text += f"<b>💳: {wallet}</b>"
             await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
             await state.finish()
@@ -70,6 +70,7 @@ async def controluser(message: types.Message, state: FSMContext):
         await message.answer(text="Iltimos, faqat sonlardan foydalaning❗️")
         await Control.control.set()
 
+# Foydalanuvchi balansiga pul qoshish uchun
 @dp.callback_query_handler(text="qoshish", state='*')
 async def pul_qoshish(call: types.CallbackQuery, state: FSMContext):
     await call.message.answer(text="<b>Foydalanuvchi balansiga nech pul qo'shmoqchisiz?</b>")
@@ -85,7 +86,36 @@ async def state_add(message: types.Message, state: FSMContext):
     data = await state.get_data()
     user_id = data.get('user_id')
 
-    # user = await db.select_one_users(user_id=int(user_id))
-    # balans = user[0][9]
-    await db.update_user_balance(balance=int(text), user_id=int(user_id))
-    print("Update")
+    await db.add_user_balance(user_id=int(user_id), miqdor=int(text))
+    await message.answer(text=f"<code>{user_id}</code> - dagi foydalanuvchining balansiga <code>{text}</code> so'm qo'shildi✅")
+    await state.finish()
+
+# Foydalanuvchi balansidan pul olish  uchun
+@dp.callback_query_handler(text="ayirish", state='*')
+async def pul_qoshish(call: types.CallbackQuery, state: FSMContext):
+    await call.message.answer(text="<b>Foydalanuvchi balansiga nech pul olmoqchisiz?</b>")
+    user_id = call.message.text.split('\n')[2].split(': ')[1]
+    await state.update_data(
+        {'user_id': user_id}
+    )
+    await Control.subtraction.set()
+
+@dp.message_handler(state=Control.subtraction)
+async def state_add(message: types.Message, state: FSMContext):
+    text = message.text
+    data = await state.get_data()
+    user_id = data.get('user_id')
+
+    await db.subtraction_user_balance(user_id=int(user_id), miqdor=int(text))
+    await message.answer(text=f"<code>{user_id}</code> - dagi foydalanuvchining balansidan <code>{text}</code> so'm oldingiz✅")
+    await state.finish()
+
+
+# Foydalanuvchini bloklash uchun
+@dp.callback_query_handler(text="bloklash", state='*')
+async def pul_qoshish(call: types.CallbackQuery, state: FSMContext):
+    user_id = call.message.text.split('\n')[2].split(': ')[1]
+
+    await db.add_user_to_ban(user_id=int(user_id))
+    await call.message.answer(text="Foydalanuvchi bloklandi✅")
+    await state.finish()

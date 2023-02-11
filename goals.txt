@@ -2,7 +2,12 @@
 2) Phone Number => DONE
 3) Make Money => DONE
 4) Balance => DONE
-5) Withdraw Money => Loading
-6) Pay History => Loading
-7) Manual => Loading
-8) Top Score => Loading
+5) Withdraw Money => DONE
+6) Pay History => Loading...
+7) Manual => Loading...
+8) Top Score => Loading...
+9.1) Admin panel:
+    1)Statistika => DONE
+    2)Reklama yuborish => DONE
+    3)Foydalanuvchini boshqarish => DONE
+    4)Asosiy sozlamalar => Loading...
