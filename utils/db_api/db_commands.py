@@ -72,10 +72,12 @@ class Database:
     async def create_table_admin_panel(self):
         sql = """
         CREATE TABLE IF NOT EXISTS Admin (
+        id SERIAL PRIMARY KEY,
         tolovtarixi TEXT NULL,
         qollanma TEXT NULL,
-        top TEXT NULL,
-        
+        adminuser TEXT NULL,
+        minimalsumma BigInt NOT NULL,
+        taklifsumma BigInt NOT NULL
         );
         """
         await self.execute(sql, execute=True)
@@ -99,6 +101,10 @@ class Database:
         sql = "INSERT INTO ban (user_id) VALUES($1) returning *"
         return await self.execute(sql, user_id, fetchrow=True)
 
+    async def add_user_to_panel(self):
+        sql = "INSERT INTO Admin (minimalsumma, taklifsumma) VALUES(3000, 200) returning *"
+        return await self.execute(sql, fetchrow=True)
+
     async def select_all_users(self):
         sql = "SELECT * FROM Users"
         return await self.execute(sql, fetch=True)
@@ -110,6 +116,11 @@ class Database:
     async def select_one_ban_user(self, user_id):
         sql = "SELECT * FROM Ban WHERE user_id=$1"
         return await self.execute(sql, user_id, fetch=True)
+
+
+    async def select_from_panel(self, id):
+        sql = "SELECT * FROM Admin WHERE id=$1"
+        return await self.execute(sql, id, fetch=True)
 
     async def select_user(self, **kwargs):
         sql = "SELECT * FROM Users WHERE "
@@ -128,6 +139,10 @@ class Database:
         sql = "UPDATE Users SET balance=$1 WHERE telegram_id=$2"
         return await self.execute(sql, balance, user_id, execute=True)
 
+    async def update_admin_tolov_tarix(self, tolovtarix, id):
+        sql = "UPDATE Admin SET tolovtarixi=$1 WHERE id=$2"
+        return await self.execute(sql, tolovtarix, id, execute=True)
+
     async def update_count(self, user_id):
         sql = "UPDATE Users SET count=count+1 WHERE user_id=$1"
         return await self.execute(sql, user_id, execute=True)
@@ -135,6 +150,14 @@ class Database:
     async def update_balance_count(self, user_id):
         sql = "UPDATE Users SET balance=balance+350 WHERE user_id=$1"
         return await self.execute(sql, user_id, execute=True)
+
+    async def update_admin_qollanma(self, qollanma, id):
+        sql = "UPDATE Admin SET qollanma=$1 WHERE id=$2"
+        return await self.execute(sql, qollanma, id, execute=True)
+
+    async def update_admin_username(self, adminuser, id):
+        sql = "UPDATE Admin SET adminuser=$1 WHERE id=$2"
+        return await self.execute(sql, adminuser, id, execute=True)
     
     async def update_user_phone(self, phone, user_id):
         sql = "UPDATE Users SET phone=$1 WHERE user_id=$2"

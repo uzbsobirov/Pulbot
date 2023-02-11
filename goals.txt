@@ -10,4 +10,4 @@
     1)Statistika => DONE
     2)Reklama yuborish => DONE
     3)Foydalanuvchini boshqarish => DONE
-    4)Asosiy sozlamalar => Loading...
+    4)Asosiy sozlamalar => 60%
