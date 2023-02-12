@@ -112,4 +112,23 @@ async def state_sum(message: types.Message, state: FSMContext):
 # This handler send message to user
 @dp.callback_query_handler(text="xabaryuborish", state='*')
 async def admin_user(call: types.CallbackQuery, state: FSMContext):
-    print(call.message.text.split(': ')[2][:10])
+    await call.message.delete()
+    user = call.message.text.split(': ')[2][:10]
+    await call.message.answer(text="<b>Foydalanuvchiga yubormoqchi bo'lgan xabaringizni yuboring!</b>")
+    await state.update_data(
+        {'user': user}
+    )
+    await SendMessage.message.set()
+
+@dp.message_handler(state=SendMessage.message)
+async def state_message(message: types.Message, state: FSMContext):
+    msg = message.text
+    data = await state.get_data()
+    user = data.get('user')
+    try:
+        await bot.send_message(chat_id=int(user), text=msg)
+        await bot.send_message(chat_id=ADMINS[0], text="Xabar foydalanuvchiga  muvaffaqqiyatli yuborildi✅")
+        await state.finish()
+    except:
+        await bot.send_message(chat_id=ADMINS[0], text="Xabar foydalanuvchiga yuborilmadi❌")
+        await state.finish()

@@ -11,6 +11,7 @@ async def on_startup(dispatcher):
     await db.create_table_ban_users()
     await db.create_table_users()
     await db.create_table_admin_panel()
+    await db.create_table_sponsor()
 
     # Birlamchi komandalar (/start va /help)
     await set_default_commands(dispatcher)

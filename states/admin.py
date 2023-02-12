@@ -22,3 +22,17 @@ class MinSum(StatesGroup):
 # For `Taklif summa`
 class TaklifSumma(StatesGroup):
     summa = State()
+
+# For `Xabar yuborish`
+class SendMessage(StatesGroup):
+    message = State()
+
+# <----------Majburiy obuna---------->
+class AddSponsor(StatesGroup):
+    first = State()
+    second = State()
+    third = State()
+    fourth = State()
+    fifth = State()
+    sixth = State()
+

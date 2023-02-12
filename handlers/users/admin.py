@@ -41,7 +41,7 @@ async def get_all_users(message: types.Message):
 #     await message.answer("Baza tozalandi!")
 
 
-@dp.message_handler(commands=['panel'], state='*', user_id=ADMINS[0])
+@dp.message_handler(text="💻 Admin panel", state='*', user_id=ADMINS[0])
 async def funcpanel(message: types.Message, state: FSMContext):
     await message.answer(text="Admin panelga xush kelibsiz👣", reply_markup=panel)
     await state.finish()

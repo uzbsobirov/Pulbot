@@ -2,7 +2,7 @@ import re
 import asyncpg
 from loader import dp, bot, db
 from aiogram import types
-from keyboards.default.main import main
+from keyboards.default.main import main, main_admin
 from data.config import CHANNELS, ADMINS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.dispatcher import FSMContext
@@ -49,15 +49,27 @@ async def check_user_subs(call: types.CallbackQuery, state: FSMContext):
                 panel = await db.select_from_panel(id=1)
                 args = user[0][7]
                 if args:
-                    await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
-                    await db.update_count(user_id=args)
-                    await db.update_balance_count(user_id=args)
-                    await bot.send_message(chat_id=args, text=f"<b>Tabriklaymiz siz taklif qilgan do'stingiz {mention} a'zo bo'ldi va sizga {panel[0][5]} so'm taqdim etildi👏</b>")
-                    await state.finish()
+                    if user_id == int(ADMINS[0]):
+                        await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main_admin)
+                        await db.update_count(user_id=args)
+                        await db.update_balance_count(user_id=args)
+                        await bot.send_message(chat_id=args, text=f"<b>Tabriklaymiz siz taklif qilgan do'stingiz {mention} a'zo bo'ldi va sizga {panel[0][5]} so'm taqdim etildi👏</b>")
+                        await state.finish()
+                    else:
+                        await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
+                        await db.update_count(user_id=args)
+                        await db.update_balance_count(user_id=args)
+                        await bot.send_message(chat_id=args,
+                                               text=f"<b>Tabriklaymiz siz taklif qilgan do'stingiz {mention} a'zo bo'ldi va sizga {panel[0][5]} so'm taqdim etildi👏</b>")
+                        await state.finish()
 
                 else:
-                    await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
-                    await state.finish()
+                    if user_id == int(ADMINS[0]):
+                        await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main_admin)
+                        await state.finish()
+                    else:
+                        await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
+                        await state.finish()
             else:
                 # Agar user malumoti bazada bo'lsa
                 try:

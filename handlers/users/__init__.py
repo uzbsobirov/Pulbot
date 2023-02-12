@@ -13,3 +13,4 @@ from . import mainsettings
 from . import tolovtarix
 from . import qollanma
 from . import topuser
+from . import sponsor

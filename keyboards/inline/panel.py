@@ -30,3 +30,11 @@ mainsettings = InlineKeyboardMarkup(
         ]
     ]
 )
+
+add_sponsor = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="➕ Kanal qo'shish", callback_data='addsponsor')
+        ]
+    ]
+)

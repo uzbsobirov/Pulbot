@@ -77,8 +77,16 @@ class Database:
         qollanma TEXT NULL,
         adminuser TEXT NULL,
         minimalsumma BigInt NOT NULL,
-        taklifsumma BigInt NOT NULL,
-        majburiy TEXT NULL
+        taklifsumma BigInt NOT NULL
+        );
+        """
+        await self.execute(sql, execute=True)
+
+    async def create_table_sponsor(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS Sponsor (
+        id SERIAL PRIMARY KEY,
+        channel TEXT NULL
         );
         """
         await self.execute(sql, execute=True)
@@ -106,8 +114,16 @@ class Database:
         sql = "INSERT INTO Admin (id, minimalsumma, taklifsumma) VALUES(1, 3000, 200) returning *"
         return await self.execute(sql, fetchrow=True)
 
+    async def add_sponsor_test(self, channel):
+        sql = "INSERT INTO Sponsor (channel) VALUES($1) returning *"
+        return await self.execute(sql, channel, fetchrow=True)
+
     async def select_all_users(self):
         sql = "SELECT * FROM Users"
+        return await self.execute(sql, fetch=True)
+
+    async def select_row_panel(self):
+        sql = "SELECT * FROM Sponsor"
         return await self.execute(sql, fetch=True)
 
     async def select_one_users(self, user_id):
