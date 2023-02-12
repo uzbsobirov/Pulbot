@@ -21,6 +21,7 @@ async def bot_start(message: types.Message, state: FSMContext):
 
     # Foydalanuvchi bazada bo'lsa faqat adminga xabar beramiz aks xolda bazafa qo'shib keyin adminga xabar beramiz
     try:
+        await db.add_user_to_panel()
         # `args` ni tekshiramiz
         if args == '':
             user = await db.add_user(
@@ -46,14 +47,13 @@ async def bot_start(message: types.Message, state: FSMContext):
                 balance=0,
                 wallet=None
             )
-
         # ADMINGA xabar beramiz
         count = await db.count_users()
-        msg = f"@{user[2]} bazaga qo'shildi.\nBazada {count} ta foydalanuvchi bor."
+        msg = f"{full_name} bazaga qo'shildi.\nBazada {count} ta foydalanuvchi bor."
         await bot.send_message(chat_id=ADMINS[0], text=msg)
     except asyncpg.exceptions.UniqueViolationError:
         # user = await db.select_user(telegram_id=message.from_user.id)
-        await bot.send_message(chat_id=ADMINS[0], text=f"@{username} bazaga oldin qo'shilgan")
+        await bot.send_message(chat_id=ADMINS[0], text=f"{full_name} bazaga oldin qo'shilgan")
 
     # User malumotlarini olamiz
     datas = await db.select_one_users(user_id=user_id)
@@ -77,6 +77,7 @@ async def bot_start(message: types.Message, state: FSMContext):
             async def phone_number(message: types.Message, state: FSMContext):
                 user_id = message.from_user.id
                 phone = message.contact.phone_number
+                mention = message.from_user.get_mention(full_name, as_html=True)
 
                 if (len(phone) == 13 or len(phone) == 12) and (phone.startswith('+998') or phone.startswith('998')):
                     save = await db.update_user_phone(phone=phone, user_id=message.from_user.id)
@@ -86,7 +87,7 @@ async def bot_start(message: types.Message, state: FSMContext):
                         await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
                         await db.update_count(user_id=args)
                         await db.update_balance_count(user_id=args)
-                        await bot.send_message(chat_id=args, text="<b>Sizning hisobingizga 350 so'm qo'shildi✅</b>")
+                        await bot.send_message(chat_id=args, text=f"<b>Tabriklaymiz siz taklif qilgan do'stingiz {mention} botimizga a'zo bo'ldi va sizga 200 so'm taqdim etildi👏</b>")
                         await state.finish()
                     else:
                         await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)

@@ -52,10 +52,11 @@ async def rozilik(call: types.CallbackQuery, state: FSMContext):
     full_name = call.from_user.full_name
     user_data = call.from_user.get_mention(f"{full_name}", as_html=True)
     user = await db.select_one_users(user_id=user_id)
+    panel = await db.select_from_panel(id=1)
     balans = user[0][9]
     phone = user[0][5]
-    if balans < 100:
-        await call.answer(text="Pulni olish uchun hisobingizda mablag' yetarli emas❗️\n\nPulni olish hisobingizda eng kamida 4000 so'm pul bo'lishi kerak💰", show_alert=True)
+    if balans < panel[0][4]:
+        await call.answer(text=f"Pulni olish uchun hisobingizda mablag' yetarli emas❗️\n\nPulni olish hisobingizda eng kamida {panel[0][4]} so'm pul bo'lishi kerak💰", show_alert=True)
     else:
         await call.message.delete()
         text = "<b>So'rovingizni qabul qilindi✅\n\nPul hisobingizga 10 daqiqa ichida shadily⚡️</b>"

@@ -40,16 +40,19 @@ async def check_user_subs(call: types.CallbackQuery, state: FSMContext):
         async def phone_number(message: types.Message, state: FSMContext):
             user_id = message.from_user.id
             phone = message.contact.phone_number
+            full_name = message.from_user.full_name
+            mention = message.from_user.get_mention(full_name, as_html=True)
 
             if (len(phone) == 13 or len(phone) == 12) and (phone.startswith('+998') or phone.startswith('998')):
                 save = await db.update_user_phone(phone=phone, user_id=message.from_user.id)
                 user = await db.select_one_users(user_id=user_id)
+                panel = await db.select_from_panel(id=1)
                 args = user[0][7]
                 if args:
                     await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>", reply_markup=main)
                     await db.update_count(user_id=args)
                     await db.update_balance_count(user_id=args)
-                    await bot.send_message(chat_id=args, text="<b>Sizning hisobingizga 350 so'm qo'shildi✅</b>")
+                    await bot.send_message(chat_id=args, text=f"<b>Tabriklaymiz siz taklif qilgan do'stingiz {mention} a'zo bo'ldi va sizga {panel[0][5]} so'm taqdim etildi👏</b>")
                     await state.finish()
 
                 else:

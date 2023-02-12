@@ -66,3 +66,8 @@ async def state_username(message: types.Message, state: FSMContext):
     await db.update_admin_username(adminuser=text, id=1)
     await message.answer("Admin usernamesi bazaga saqlandi✅")
     await state.finish()
+
+# This handler send message to user
+@dp.callback_query_handler(text="xabaryuborish", state='*')
+async def admin_user(call: types.CallbackQuery, state: FSMContext):
+    print(call.message.text)

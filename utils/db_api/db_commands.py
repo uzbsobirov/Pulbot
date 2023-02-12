@@ -72,12 +72,13 @@ class Database:
     async def create_table_admin_panel(self):
         sql = """
         CREATE TABLE IF NOT EXISTS Admin (
-        id SERIAL PRIMARY KEY,
+        id BigInt UNIQUE,
         tolovtarixi TEXT NULL,
         qollanma TEXT NULL,
         adminuser TEXT NULL,
         minimalsumma BigInt NOT NULL,
-        taklifsumma BigInt NOT NULL
+        taklifsumma BigInt NOT NULL,
+        majburiy TEXT NULL
         );
         """
         await self.execute(sql, execute=True)
@@ -102,7 +103,7 @@ class Database:
         return await self.execute(sql, user_id, fetchrow=True)
 
     async def add_user_to_panel(self):
-        sql = "INSERT INTO Admin (minimalsumma, taklifsumma) VALUES(3000, 200) returning *"
+        sql = "INSERT INTO Admin (id, minimalsumma, taklifsumma) VALUES(1, 3000, 200) returning *"
         return await self.execute(sql, fetchrow=True)
 
     async def select_all_users(self):
@@ -148,7 +149,7 @@ class Database:
         return await self.execute(sql, user_id, execute=True)
 
     async def update_balance_count(self, user_id):
-        sql = "UPDATE Users SET balance=balance+350 WHERE user_id=$1"
+        sql = "UPDATE Users SET balance=balance+200 WHERE user_id=$1"
         return await self.execute(sql, user_id, execute=True)
 
     async def update_admin_qollanma(self, qollanma, id):

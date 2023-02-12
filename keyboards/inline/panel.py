@@ -7,6 +7,9 @@ control_balans = InlineKeyboardMarkup(
             InlineKeyboardButton(text="➖ Pul ayirish", callback_data='ayirish')
         ],
         [
+            InlineKeyboardButton(text="📤 Xabar yuborish", callback_data='xabaryuborish')
+        ],
+        [
             InlineKeyboardButton(text="🚷 Bloklash", callback_data='bloklash')
         ]
     ]

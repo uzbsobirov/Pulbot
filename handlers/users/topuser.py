@@ -13,9 +13,9 @@ async def user_top(message: types.Message, state: FSMContext):
     for top_user in top_users:
         # Get user datas
         full_name = top_user[1] # Full name
-        user = message.from_user.get_mention(f"{full_name}", as_html=True) # Get mention / direct
+        user_id = top_user[3] # User id
+        user = f"<a href='tg://user?id={user_id}'>{full_name}</a>" # Get mention / direct
         count = top_user[8] # Referal count
-        lst.append(str(count))
         result += f"{number}) {user} -- {count}\n"
         number += 1
     # sort = sorted(lst, reverse=True)
