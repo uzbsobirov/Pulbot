@@ -67,7 +67,49 @@ async def state_username(message: types.Message, state: FSMContext):
     await message.answer("Admin usernamesi bazaga saqlandi✅")
     await state.finish()
 
+
+# This handler to set `minimalsumma`
+@dp.callback_query_handler(text="minsum", state='*')
+async def pul_qoshish(call: types.CallbackQuery, state: FSMContext):
+    await call.message.delete()
+    await call.message.answer(text="<b>Minimal summa</b> uchun son yuboring\n\n"
+    "<b><code>Minimal summa</code> -- bu foydalanuvchi botdan eng kam miqdorda pul chiqara olishi,"
+    " yani foydalanuvchining balansidagi pul malum miqdordan kam bo'lsa foydalanuvchi pulni chiqara olmaydi!!!</b>")
+    await MinSum.summa.set()
+
+@dp.message_handler(state=MinSum.summa)
+async def state_sum(message: types.Message, state: FSMContext):
+    summa = message.text
+    if summa.isdigit():
+        await db.update_panel_min_sum(minimalsumma=int(summa), id=1)
+        await bot.send_message(chat_id=ADMINS[0], text=f"<code>Minimal summa</code> saqlandi, uning qiymati -- {summa}")
+        await state.finish()
+    else:
+        await bot.send_message(chat_id=ADMINS[0], text="<code>Minimal summa</code> faqat sonlardan tashkil topgan "
+                                                       "bo'lishi kerak\n\nBoshqattan kiriting")
+        await MinSum.summa.set()
+
+# This handler to set `minimalsumma`
+@dp.callback_query_handler(text="taklifsumma", state='*')
+async def pul_qoshish(call: types.CallbackQuery, state: FSMContext):
+    await call.message.delete()
+    await call.message.answer(text="<b>Taklif summa</b> uchun son yuboring\n\n"
+    "<b><code>Taklif summa</code> -- bu foydalanuvchi har bir taklif qilgan do'sti uchun pul miqdori</b>")
+    await TaklifSumma.summa.set()
+
+@dp.message_handler(state=TaklifSumma.summa)
+async def state_sum(message: types.Message, state: FSMContext):
+    summa = message.text
+    if summa.isdigit():
+        await db.update_panel_taklif_sum(taklifsumma=int(summa), id=1)
+        await bot.send_message(chat_id=ADMINS[0], text=f"<code>Taklif summa</code> saqlandi, uning qiymati -- {summa}")
+        await state.finish()
+    else:
+        await bot.send_message(chat_id=ADMINS[0], text="<code>Taklif summa</code> faqat sonlardan tashkil topgan "
+                                                       "bo'lishi kerak\n\nBoshqattan kiriting")
+        await TaklifSumma.summa.set()
+
 # This handler send message to user
 @dp.callback_query_handler(text="xabaryuborish", state='*')
 async def admin_user(call: types.CallbackQuery, state: FSMContext):
-    print(call.message.text)
+    print(call.message.text.split(': ')[2][:10])

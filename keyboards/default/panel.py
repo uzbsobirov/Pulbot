@@ -8,6 +8,9 @@ panel = ReplyKeyboardMarkup(
             KeyboardButton(text="🗞 Reklama yuborish")
         ],
         [
+            KeyboardButton(text="📢 Majburiy obuna")
+        ],
+        [
             KeyboardButton(text="👤 Foydalanuvchini boshqarish")
         ],
         [

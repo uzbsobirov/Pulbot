@@ -135,6 +135,14 @@ class Database:
     async def update_user_username(self, username, telegram_id):
         sql = "UPDATE Users SET username=$1 WHERE telegram_id=$2"
         return await self.execute(sql, username, telegram_id, execute=True)
+
+    async def update_panel_min_sum(self, minimalsumma, id):
+        sql = "UPDATE Admin SET minimalsumma=$1 WHERE id=$2"
+        return await self.execute(sql, minimalsumma, id, execute=True)
+
+    async def update_panel_taklif_sum(self, taklifsumma, id):
+        sql = "UPDATE Admin SET taklifsumma=$1 WHERE id=$2"
+        return await self.execute(sql, taklifsumma, id, execute=True)
     
     async def update_user_balans(self, balance, user_id):
         sql = "UPDATE Users SET balance=$1 WHERE telegram_id=$2"

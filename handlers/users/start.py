@@ -6,7 +6,7 @@ from loader import dp, db, bot
 from data.config import ADMINS, CHANNELS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.dispatcher import FSMContext
-from keyboards.default.main import main, main_admin
+from keyboards.default.main import main
 from aiogram.utils.deep_linking import get_start_link
 from states.starting import Starting
 

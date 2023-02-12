@@ -13,3 +13,12 @@ class Manual(StatesGroup):
 # For `Admin User`
 class AdminUser(StatesGroup):
     username = State()
+
+# For `Minimal summa`
+class MinSum(StatesGroup):
+    summa = State()
+
+
+# For `Taklif summa`
+class TaklifSumma(StatesGroup):
+    summa = State()

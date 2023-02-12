@@ -87,7 +87,8 @@ async def state_add(message: types.Message, state: FSMContext):
     user_id = data.get('user_id')
 
     await db.add_user_balance(user_id=int(user_id), miqdor=int(text))
-    await message.answer(text=f"<code>{user_id}</code> - dagi foydalanuvchining balansiga <code>{text}</code> so'm qo'shildi✅")
+    await message.answer(text=f"<code>{user_id}</code> - dagi foydalanuvchining balansiga <code>{text}</code> "
+                              "so'm qo'shildi✅")
     await state.finish()
 
 # Foydalanuvchi balansidan pul olish  uchun
@@ -107,7 +108,8 @@ async def state_add(message: types.Message, state: FSMContext):
     user_id = data.get('user_id')
 
     await db.subtraction_user_balance(user_id=int(user_id), miqdor=int(text))
-    await message.answer(text=f"<code>{user_id}</code> - dagi foydalanuvchining balansidan <code>{text}</code> so'm oldingiz✅")
+    await message.answer(text=f"<code>{user_id}</code> - dagi foydalanuvchining balansidan <code>{text}</code> "
+                              "so'm oldingiz✅")
     await state.finish()
 
 
@@ -119,3 +121,4 @@ async def pul_qoshish(call: types.CallbackQuery, state: FSMContext):
     await db.add_user_to_ban(user_id=int(user_id))
     await call.message.answer(text="Foydalanuvchi bloklandi✅")
     await state.finish()
+
