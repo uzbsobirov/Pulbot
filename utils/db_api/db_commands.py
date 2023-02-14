@@ -86,7 +86,7 @@ class Database:
         sql = """
         CREATE TABLE IF NOT EXISTS Sponsor (
         id SERIAL PRIMARY KEY,
-        channel TEXT NULL
+        channel TEXT NULL UNIQUE
         );
         """
         await self.execute(sql, execute=True)
@@ -113,6 +113,10 @@ class Database:
     async def add_user_to_panel(self):
         sql = "INSERT INTO Admin (id, minimalsumma, taklifsumma) VALUES(1, 3000, 200) returning *"
         return await self.execute(sql, fetchrow=True)
+
+    async def add_channel(self, channel):
+        sql = "INSERT INTO Sponsor (channel) VALUES($1) returning *"
+        return await self.execute(sql, channel, fetchrow=True)
 
     async def add_sponsor_test(self, channel):
         sql = "INSERT INTO Sponsor (channel) VALUES($1) returning *"

@@ -3,7 +3,7 @@ import asyncpg
 from loader import dp, bot, db
 from aiogram import types
 from keyboards.default.main import main, main_admin
-from data.config import CHANNELS, ADMINS
+from data.config import ADMINS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.dispatcher import FSMContext
 from utils.misc.subscription import check
@@ -18,10 +18,11 @@ async def check_user_subs(call: types.CallbackQuery, state: FSMContext):
     final_status = True
 
     result = InlineKeyboardMarkup(row_width=1)
-    
-    for channel in CHANNELS:
-        status = await check(user_id=call.from_user.id, channel=channel)
-        channel = await bot.get_chat(channel)
+
+    panel = await db.select_row_panel()
+    for channel in panel:
+        status = await check(user_id=call.from_user.id, channel=channel[1])
+        channel = await bot.get_chat(channel[1])
         invite_link = await channel.export_invite_link()
         if status is not True:
             final_status *= False

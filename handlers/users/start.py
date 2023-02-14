@@ -5,7 +5,7 @@ from aiogram.dispatcher.filters.builtin import CommandStart
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.utils.deep_linking import get_start_link
 
-from data.config import ADMINS, CHANNELS
+from data.config import ADMINS
 from keyboards.default.main import main, main_admin
 from loader import dp, db, bot
 from states.starting import Starting
@@ -68,8 +68,9 @@ async def bot_start(message: types.Message, state: FSMContext):
     issubs = datas[0][4]
     if issubs == 'false':
         markup = InlineKeyboardMarkup(row_width=1)
-        for channel in CHANNELS:
-            chat = await bot.get_chat(channel)
+        panel = await db.select_row_panel()
+        for channel in panel:
+            chat = await bot.get_chat(channel[1])
             invite_link = await chat.export_invite_link()
             markup.insert(InlineKeyboardButton(text=chat.title, url=invite_link))
         markup.add(InlineKeyboardButton(text="✅ Obunani tekshirish", callback_data='check_subs'))

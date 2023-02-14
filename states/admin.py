@@ -29,10 +29,5 @@ class SendMessage(StatesGroup):
 
 # <----------Majburiy obuna---------->
 class AddSponsor(StatesGroup):
-    first = State()
-    second = State()
-    third = State()
-    fourth = State()
-    fifth = State()
-    sixth = State()
+    username = State()
 
