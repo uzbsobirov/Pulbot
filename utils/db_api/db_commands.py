@@ -196,6 +196,10 @@ class Database:
         sql = "UPDATE Users SET issubs=$1 WHERE user_id=$2"
         return await self.execute(sql, issubs, user_id, execute=True)
 
+    async def update_user_balance_zero(self, balance, user_id):
+        sql = "UPDATE Users SET balance=$1 WHERE user_id=$2"
+        return await self.execute(sql, balance, user_id, execute=True)
+
     async def add_user_balance(self, user_id, miqdor):
         select_sql = "SELECT * FROM Users WHERE user_id=$1"
         result = await self.execute(select_sql, user_id, fetch=True)

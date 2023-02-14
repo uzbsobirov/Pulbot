@@ -79,7 +79,7 @@ async def pul_tolandi(call: types.CallbackQuery, state: FSMContext):
     user = await db.select_one_users(user_id=int(user_id))
     balans = user[0][-2]
     phone = user[0][5]
-    await db.update_user_balance(balance=0, user_id=int(user_id))
+    await db.update_user_balance_zero(balance=0, user_id=int(user_id))
     admin_text = f"<b>#tolov\n\n👤 {user_data}\n📲 Raqam: <code>{phone}</code>\n💰 Summa: <code>{balans}</code>\n\n<i>✅ Muvaffaqiyatli o'tkazildi</i>\n\n@Puldorkubot</b>"
     await bot.send_message(chat_id=-1001828522631, text=admin_text)
     text = "Pulingiz hisobingizga o'tkazildi✅, iltimos hisobingizni tekshiring❗️"
