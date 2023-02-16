@@ -152,9 +152,9 @@ class Database:
         sql = "SELECT COUNT(*) FROM Users"
         return await self.execute(sql, fetchval=True)
 
-    async def update_user_username(self, username, telegram_id):
-        sql = "UPDATE Users SET username=$1 WHERE telegram_id=$2"
-        return await self.execute(sql, username, telegram_id, execute=True)
+    async def update_user_issubs(self, issubs, user_id):
+        sql = "UPDATE Users SET issubs=$1 WHERE user_id=$2"
+        return await self.execute(sql, issubs, user_id, execute=True)
 
     async def update_panel_min_sum(self, minimalsumma, id):
         sql = "UPDATE Admin SET minimalsumma=$1 WHERE id=$2"
@@ -226,6 +226,10 @@ class Database:
 
     async def delete_users(self):
         await self.execute("DELETE FROM Users WHERE TRUE", execute=True)
+
+    async def delete_sponsor_channel(self, channel):
+        sql = "DELETE FROM Sponsor WHERE channel=$1"
+        await self.execute(sql, channel, execute=True)
 
     async def drop_users(self):
         await self.execute("DROP TABLE Users", execute=True)

@@ -4,7 +4,6 @@ from utils.misc.subscription import check
 from aiogram.dispatcher.handler import CancelHandler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram import types
-from data.config import CHANNELS
 
 class BigBrother(BaseMiddleware):
     async def on_pre_process_update(self, update: types.Update, data: dict):
@@ -21,12 +20,19 @@ class BigBrother(BaseMiddleware):
         logging.info(user)
         markup = types.InlineKeyboardMarkup(row_width=1)
         final_status = True
+
+        CHANNELS = []
+        lst_channels = await db.select_row_panel()
+        for item in lst_channels:
+            CHANNELS.append(item[1])
+
         for channel in CHANNELS:
             status = await check(user_id=user, channel=channel)
             final_status *= status
             channel = await bot.get_chat(channel)
             invite_link = await channel.export_invite_link()
             if not status:
+                await db.update_user_issubs(issubs='false', user_id=update.message.from_user.id)
                 result = "<b>Siz bizni homiy kanallardan chiqib ketgansiz❗️\n\nBotdan foydalanish uchun homiy kanallarimizga qayta a'zo bo'ling👇</b>" 
         markup.insert(types.InlineKeyboardButton(text=channel.title, url=invite_link))
         markup.insert(types.InlineKeyboardButton(text="A'zo bo'ldim ✅", callback_data='check_subs'))

@@ -31,3 +31,5 @@ class SendMessage(StatesGroup):
 class AddSponsor(StatesGroup):
     username = State()
 
+class DeleteSponsor(StatesGroup):
+    username = State()

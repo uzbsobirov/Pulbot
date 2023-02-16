@@ -57,8 +57,15 @@ async def state_manual(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(text="adminuser", state='*')
 async def admin_user(call: types.CallbackQuery, state: FSMContext):
     await call.message.delete()
-    await call.message.answer(text="@ beligisiz <b>username</b>ni kiriting")
-    await AdminUser.username.set()
+    adminpanel = await db.select_from_panel(id=1)
+    adminuser = adminpanel[0][3]
+    if adminuser:
+        await call.message.answer(text="@ beligisiz <b>username</b>ni kiriting\n\n"
+                                        f"Hozirgi admin useri -> @{adminuser}")
+        await AdminUser.username.set()
+    else:
+        await call.message.answer(text="@ beligisiz <b>username</b>ni kiriting")
+        await AdminUser.username.set()
 
 @dp.message_handler(state=AdminUser.username)
 async def state_username(message: types.Message, state: FSMContext):
@@ -72,10 +79,19 @@ async def state_username(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(text="minsum", state='*')
 async def pul_qoshish(call: types.CallbackQuery, state: FSMContext):
     await call.message.delete()
-    await call.message.answer(text="<b>Minimal summa</b> uchun son yuboring\n\n"
-    "<b><code>Minimal summa</code> -- bu foydalanuvchi botdan eng kam miqdorda pul chiqara olishi,"
-    " yani foydalanuvchining balansidagi pul malum miqdordan kam bo'lsa foydalanuvchi pulni chiqara olmaydi!!!</b>")
-    await MinSum.summa.set()
+    adminpanel = await db.select_from_panel(id=1)
+    minimal_sum = adminpanel[0][4]
+    if minimal_sum:
+        await call.message.answer(text="<b>Minimal summa</b> uchun son yuboring\n\n"
+        "<b><code>Minimal summa</code> -- bu foydalanuvchi botdan eng kam miqdorda pul chiqara olishi,"
+        " yani foydalanuvchining balansidagi pul malum miqdordan kam bo'lsa foydalanuvchi pulni chiqara olmaydi!!!</b>\n\n"
+        f"<code>Minimal summa</code> -- hozir {minimal_sum} so'mga teng")
+        await MinSum.summa.set()
+    else:
+        await call.message.answer(text="<b>Minimal summa</b> uchun son yuboring\n\n"
+        "<b><code>Minimal summa</code> -- bu foydalanuvchi botdan eng kam miqdorda pul chiqara olishi,"
+        " yani foydalanuvchining balansidagi pul malum miqdordan kam bo'lsa foydalanuvchi pulni chiqara olmaydi!!!</b>")
+        await MinSum.summa.set()
 
 @dp.message_handler(state=MinSum.summa)
 async def state_sum(message: types.Message, state: FSMContext):
@@ -93,9 +109,17 @@ async def state_sum(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(text="taklifsumma", state='*')
 async def pul_qoshish(call: types.CallbackQuery, state: FSMContext):
     await call.message.delete()
-    await call.message.answer(text="<b>Taklif summa</b> uchun son yuboring\n\n"
-    "<b><code>Taklif summa</code> -- bu foydalanuvchi har bir taklif qilgan do'sti uchun pul miqdori</b>")
-    await TaklifSumma.summa.set()
+    adminpanel = await db.select_from_panel(id=1)
+    taklif_summa = adminpanel[0][5]
+    if taklif_summa:
+        await call.message.answer(text="<b>Taklif summa</b> uchun son yuboring\n\n"
+        "<b><code>Taklif summa</code> -- bu foydalanuvchi har bir taklif qilgan do'sti uchun pul miqdori</b>\n\n"
+        f"<code>Taklif summa</code> -- hozir {taklif_summa} so'mga teng")
+        await TaklifSumma.summa.set()
+    else:
+        await call.message.answer(text="<b>Taklif summa</b> uchun son yuboring\n\n"
+        "<b><code>Taklif summa</code> -- bu foydalanuvchi har bir taklif qilgan do'sti uchun pul miqdori</b>")
+        await TaklifSumma.summa.set()
 
 @dp.message_handler(state=TaklifSumma.summa)
 async def state_sum(message: types.Message, state: FSMContext):

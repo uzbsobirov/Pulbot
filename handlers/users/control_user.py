@@ -21,7 +21,7 @@ async def controluser(message: types.Message, state: FSMContext):
         id = user[0][0]
         full_name = user[0][1]
         username = user[0][2]
-        user_id = user[0][3]
+        userid = user[0][3]
         issubs = user[0][4]
         phone = user[0][5]
         referal_link = user[0][6]
@@ -30,38 +30,38 @@ async def controluser(message: types.Message, state: FSMContext):
         balance = user[0][9]
         wallet = user[0][10]
 
-        user_data = message.from_user.get_mention(f"{full_name}", as_html=True)
+        user_data = f"<a href='tg://user?id={userid}'>{full_name}</a>"
 
         # bazi malumotlar bosh emasligini tekshiramiz
         if referal_link is None:
             if phone is None:
                 if parent_id is None:
                     if issubs == 'true':
-                        text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
+                        text = f"<b>🔑: <code>{id}</code>\n\n🆔: {userid}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
                         text += f"<b>📲: <code>Mavjud emas</code>\n〽️: ✅A'zo bo'lgan\n⛓: {referal_link}\n👨🏻‍🦳: <code>Mavjud emas</code>\n🔢: {count}\n💰: {balance}\n</b>"
                         text += f"<b>💳: <code>Mavjud emas</code></b>"
                         await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                         await state.finish()
                     else:
-                        text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
+                        text = f"<b>🔑: <code>{id}</code>\n\n🆔: {userid}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
                         text += f"<b>📲: <code>Mavjud emas</code>\n〽️: ❌A'zo bo'lmagan\n⛓: {referal_link}\n👨🏻‍🦳: <code>Mavjud emas</code>\n🔢: {count}\n💰: {balance}\n</b>"
                         text += f"<b>💳: <code>Mavjud emas</code></b>"
                         await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                         await state.finish()
                 else:
-                    text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
+                    text = f"<b>🔑: <code>{id}</code>\n\n🆔: {userid}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
                     text += f"<b>📲: <code>Mavjud emas</code>\n〽️: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
                     text += f"<b>💳: <code>Mavjud emas</code></b>"
                     await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                     await state.finish()
             else:
-                text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
+                text = f"<b>🔑: <code>{id}</code>\n\n🆔: {userid}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
                 text += f"<b>📲: {phone}\n〽️: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
                 text += f"<b>💳: {wallet}</b>"
                 await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
                 await state.finish()
         else:
-            text = f"<b>🔑: <code>{id}</code>\n\n🆔: {user_id}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
+            text = f"<b>🔑: <code>{id}</code>\n\n🆔: {userid}\n👤: {user_data}\n🔗: {referal_link}\n</b>"
             text += f"<b>📲: {phone}\n〽️: {issubs}\n⛓: {referal_link}\n👨🏻‍🦳: {parent_id}\n🔢: {count}\n💰: {balance}\n</b>"
             text += f"<b>💳: {wallet}</b>"
             await message.answer(text=text, disable_web_page_preview=True, reply_markup=control_balans)
