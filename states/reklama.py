@@ -10,4 +10,6 @@ class Reklama(StatesGroup):
 
 class YesNo(StatesGroup):
     choose = State()
+    image_choose = State()
     btn_ha = State()
+    image_ha = State()
