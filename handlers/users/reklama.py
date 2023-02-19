@@ -61,7 +61,7 @@ async def state_video_ha(call: types.CallbackQuery, state: FSMContext):
             for user in users:
                 user_id = user[3]
                 await bot.send_photo(chat_id=user_id, caption=video_txt, photo=file_id)
-                await asyncio.sleep(0.05)
+                await asyncio.sleep(0.07)
         except Exception as error:
             print(error)
         await state.finish()
@@ -90,7 +90,7 @@ async def state_yes_btn(message: types.Message, state: FSMContext):
             user_id = user[3]
             await bot.send_photo(chat_id=user_id, photo=file_id, caption=rasm_txt, reply_markup=check_ha(text=txt,
                                                                                                          url=url))
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0.07)
         await bot.send_message(chat_id=message.chat.id, text="Xabar foydalanuvchilarga muvaffaqqiyali yuborildi")
     except Exception as error:
         print(error)
@@ -131,7 +131,7 @@ async def yes_no_choose(call: types.CallbackQuery, state: FSMContext):
             for user in users:
                 user_id = user[3]
                 await bot.send_message(chat_id=user_id, text=text)
-                await asyncio.sleep(0.05)
+                await asyncio.sleep(0.07)
         except Exception as error:
             print(error)
         await state.finish()
@@ -158,7 +158,7 @@ async def state_yes_btn(message: types.Message, state: FSMContext):
         for user in users:
             user_id = user[3]
             await bot.send_message(chat_id=user_id, text=reklama_text, reply_markup=check_ha(text=txt, url=url))
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0.07)
         await bot.send_message(chat_id=message.chat.id, text="Xabar foydalanuvchilarga muvaffaqqiyali yuborildi")
     except Exception as error:
         print(error)
@@ -239,7 +239,7 @@ async def state_yes_btn(message: types.Message, state: FSMContext):
             user_id = user[3]
             await bot.send_video(chat_id=user_id, video=file_id, caption=video_text, reply_markup=check_ha(text=txt,
                                                                                                         url=url))
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0.07)
         await bot.send_message(chat_id=message.chat.id, text="Xabar foydalanuvchilarga muvaffaqqiyali yuborildi")
     except Exception as error:
         print(error)
