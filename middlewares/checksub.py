@@ -4,6 +4,8 @@ from utils.misc.subscription import check
 from aiogram.dispatcher.handler import CancelHandler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram import types
+from keyboards.default.main import main, main_admin
+from data.config import ADMINS
 
 class BigBrother(BaseMiddleware):
     async def on_pre_process_update(self, update: types.Update, data: dict):
@@ -43,4 +45,9 @@ class BigBrother(BaseMiddleware):
                 await update.message.answer(result, reply_markup=markup, disable_web_page_preview=True)
                 raise CancelHandler()
         else:
-            return
+            if update.message.from_user.id == int(ADMINS[0]):
+                answer = f"{update.message.from_user.full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
+                await update.message.answer(text=answer, reply_markup=main_admin)
+            else:
+                answer = f"{update.message.from_user.full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
+                await update.message.answer(text=answer, reply_markup=main)

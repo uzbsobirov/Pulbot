@@ -32,6 +32,8 @@ async def check_user_subs(call: types.CallbackQuery, state: FSMContext):
     if final_status:
         await db.update_user_subs(issubs='true', user_id=call.from_user.id)
         await call.message.delete()
+
+
         check_phone = await db.select_one_users(user_id=call.from_user.id)
         user_phone = check_phone[0][5]
         if user_phone:
@@ -58,6 +60,7 @@ async def check_user_subs(call: types.CallbackQuery, state: FSMContext):
                     save = await db.update_user_phone(phone=phone, user_id=message.from_user.id)
                     user = await db.select_one_users(user_id=user_id)
                     panel = await db.select_from_panel(id=1)
+                    taklifsumma = panel[0][5]
                     args = user[0][7]
                     if args:
                         if user_id == int(ADMINS[0]):

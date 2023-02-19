@@ -96,6 +96,8 @@ async def bot_start(message: types.Message, state: FSMContext):
                         save = await db.update_user_phone(phone=phone, user_id=message.from_user.id)
                         user = await db.select_one_users(user_id=user_id)
                         args = user[0][7]
+                        panel = await db.select_from_panel(id=1)
+                        taklifsumma = panel[0][5]
                         if args:
                             if user_id == int(ADMINS[0]):
                                 await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>",
@@ -157,6 +159,8 @@ async def bot_start(message: types.Message, state: FSMContext):
                     save = await db.update_user_phone(phone=phone, user_id=message.from_user.id)
                     user = await db.select_one_users(user_id=user_id)
                     args = user[0][7]
+                    panel = await db.select_from_panel(id=1)
+                    taklifsumma = panel[0][5]
                     if args:
                         if user_id == int(ADMINS[0]):
                             await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>",

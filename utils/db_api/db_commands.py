@@ -176,9 +176,18 @@ class Database:
         sql = "UPDATE Users SET count=count+1 WHERE user_id=$1"
         return await self.execute(sql, user_id, execute=True)
 
+    # async def update_balance_count(self, miqdor, user_id):
+    #     sql = f"UPDATE Users SET balance=balance+{miqdor} WHERE user_id=$2"
+    #     return await self.execute(sql, miqdor, user_id, execute=True)
+
     async def update_balance_count(self, user_id):
-        sql = "UPDATE Users SET balance=balance+200 WHERE user_id=$1"
-        return await self.execute(sql, user_id, execute=True)
+        select_sql = "SELECT * FROM Admin"
+        result = await self.execute(select_sql, fetch=True)
+
+        if result:
+            balans = result[0][5]
+            sql = f"UPDATE Users SET balance=balance+{balans} WHERE user_id=$1"
+            return await self.execute(sql, user_id, execute=True)
 
     async def update_admin_qollanma(self, qollanma, id):
         sql = "UPDATE Admin SET qollanma=$1 WHERE id=$2"
