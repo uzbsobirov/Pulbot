@@ -26,17 +26,21 @@ class BigBrother(BaseMiddleware):
         for item in lst_channels:
             CHANNELS.append(item[1])
 
-        for channel in CHANNELS:
-            status = await check(user_id=user, channel=channel)
-            final_status *= status
-            channel = await bot.get_chat(channel)
-            invite_link = await channel.export_invite_link()
-            if not status:
-                await db.update_user_issubs(issubs='false', user_id=update.message.from_user.id)
-                result = "<b>Siz bizni homiy kanallardan chiqib ketgansiz❗️\n\nBotdan foydalanish uchun homiy kanallarimizga qayta a'zo bo'ling👇</b>" 
-        markup.insert(types.InlineKeyboardButton(text=channel.title, url=invite_link))
-        markup.insert(types.InlineKeyboardButton(text="A'zo bo'ldim ✅", callback_data='check_subs'))
+        if len(CHANNELS) >= 1:
 
-        if not final_status:
-            await update.message.answer(result, reply_markup=markup, disable_web_page_preview=True)
-            raise CancelHandler()
+            for channel in CHANNELS:
+                status = await check(user_id=user, channel=channel)
+                final_status *= status
+                channel = await bot.get_chat(channel)
+                invite_link = await channel.export_invite_link()
+                if not status:
+                    await db.update_user_issubs(issubs='false', user_id=update.message.from_user.id)
+                    result = "<b>Siz bizni homiy kanallardan chiqib ketgansiz❗️\n\nBotdan foydalanish uchun homiy kanallarimizga qayta a'zo bo'ling👇</b>"
+            markup.insert(types.InlineKeyboardButton(text=channel.title, url=invite_link))
+            markup.insert(types.InlineKeyboardButton(text="A'zo bo'ldim ✅", callback_data='check_subs'))
+
+            if not final_status:
+                await update.message.answer(result, reply_markup=markup, disable_web_page_preview=True)
+                raise CancelHandler()
+        else:
+            return

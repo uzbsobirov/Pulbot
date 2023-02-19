@@ -7,3 +7,7 @@ class Reklama(StatesGroup):
     video = State()
     video_text = State()
     mediagroup = State()
+
+class YesNo(StatesGroup):
+    choose = State()
+    btn_ha = State()
