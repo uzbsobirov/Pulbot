@@ -178,23 +178,69 @@ async def video_wtih_text(message: types.Message, state: FSMContext):
     file_id = message['video']['file_id']
     await state.update_data(
         {
-            "file_id": file_id
+            "video_id": file_id
         }
     )
     await Reklama.video_text.set()
 @dp.message_handler(state=Reklama.video_text)
 async def videoni_text(message: types.Message, state: FSMContext):
+    video_text = message.text
+
+    await state.update_data(
+        {'video_text': video_text}
+    )
+
+    await message.answer(text="Tugma qo'shamizmi?", reply_markup=yes_no)
+    await YesNo.video_choose.set()
+
+@dp.callback_query_handler(state=YesNo.video_choose)
+async def state_video_choose(call: types.CallbackQuery, state: FSMContext):
+
+    if call.data == 'check_yoq':
+        data = await state.get_data()
+        file_id = data.get('video_id')
+        video_text = data.get('video_text')
+
+        # Foydalanuvchilarni select qilib olamiz
+        users = await db.select_all_users()
+
+        # Agar foydalanuvchi botni blok qilgan bo'lsa try, except ishlatamiz
+        try:
+            for user in users:
+                user_id = user[3]
+                await bot.send_video(chat_id=user_id, caption=video_text, video=file_id)
+                await asyncio.sleep(0.05)
+        except Exception as error:
+            print(error)
+        await state.finish()
+    else:
+        await call.message.delete()
+        await call.message.answer(text="Tugma uchun text va link yuboring! <code>Text</code>+<code>Link</code>\n\n"
+                                       "Exm: <b>Kanalga o'tish+https://t.me/blogca</b>")
+        await YesNo.video_ha.set()
+
+
+@dp.message_handler(state=YesNo.video_ha)
+async def state_yes_btn(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    file_id = data.get('video_id')
+    video_text = data.get('video_text')
+
     text = message.text
+    txt = text.split('+')[0]
+    url = text.split('+')[1]
+
+    # Foydalanuvchilarni select qilib olamiz
     users = await db.select_all_users()
 
-    data = await state.get_data()
-    file_id = data.get('file_id')
     # Agar foydalanuvchi botni blok qilgan bo'lsa try, except ishlatamiz
     try:
         for user in users:
             user_id = user[3]
-            await bot.send_video(chat_id=user_id, caption=text, video=file_id)
+            await bot.send_video(chat_id=user_id, video=file_id, caption=video_text, reply_markup=check_ha(text=txt,
+                                                                                                        url=url))
             await asyncio.sleep(0.05)
+        await bot.send_message(chat_id=message.chat.id, text="Xabar foydalanuvchilarga muvaffaqqiyali yuborildi")
     except Exception as error:
         print(error)
     await state.finish()
