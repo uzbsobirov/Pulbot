@@ -34,16 +34,22 @@ async def check_user_subs(call: types.CallbackQuery, state: FSMContext):
         await call.message.delete()
 
 
-        check_phone = await db.select_one_users(user_id=call.from_user.id)
-        user_phone = check_phone[0][5]
-        if user_phone:
+
+        try:
+            check_phone = await db.select_one_users(user_id=call.from_user.id)
+            user_phone = check_phone[0][5]
+            # if user_phone:
             if call.from_user.id == int(ADMINS[0]):
                 txt = "<b>Siz homiy kanallarga qaytadan obuna bo'ldingiz✅</b>"
                 await call.message.answer(text=txt, reply_markup=main_admin)
             else:
                 txt = "<b>Siz homiy kanallarga qaytadan obuna bo'ldingiz✅</b>"
                 await call.message.answer(text=txt, reply_markup=main)
-        else:
+            # else:
+            #     text = "<b>Telefon raqamingizni yuboring. ❗️\n\nRaqamni yuborish uchun pastdagi «Raqamni yuborish 📞» tugmasini bosing👇</b>"
+            #     await call.message.answer(text=text, reply_markup=kontakt)
+            #     await Starting.phone.set()
+        except:
             text = "<b>Telefon raqamingizni yuboring. ❗️\n\nRaqamni yuborish uchun pastdagi «Raqamni yuborish 📞» tugmasini bosing👇</b>"
             await call.message.answer(text=text, reply_markup=kontakt)
             await Starting.phone.set()

@@ -45,9 +45,12 @@ class BigBrother(BaseMiddleware):
                 await update.message.answer(result, reply_markup=markup, disable_web_page_preview=True)
                 raise CancelHandler()
         else:
-            if update.message.from_user.id == int(ADMINS[0]):
-                answer = f"{update.message.from_user.full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
+            one_user = await db.select_one_users(user_id=user)
+            full_name = one_user[0][1]
+            answer = f"{full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
+            if user == ADMINS[0]:
                 await update.message.answer(text=answer, reply_markup=main_admin)
+                raise CancelHandler()
             else:
-                answer = f"{update.message.from_user.full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
                 await update.message.answer(text=answer, reply_markup=main)
+                raise CancelHandler()

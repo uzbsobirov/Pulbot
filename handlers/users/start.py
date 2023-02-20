@@ -147,7 +147,17 @@ async def bot_start(message: types.Message, state: FSMContext):
                     await state.finish()
     else:
         phone = datas[0][5]
-        if phone is None or phone == '' or phone == ([], {}, ()):
+        if phone:
+            if user_id == int(ADMINS[0]):
+                answer = f"{full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
+                await message.answer(text=answer, reply_markup=main_admin)
+                await state.finish()
+            else:
+                answer = f"{full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
+                await message.answer(text=answer, reply_markup=main)
+                await state.finish()
+
+        else:
             # Foydalananuvchi telefon raqamini olish uchun handler
             @dp.message_handler(content_types=types.ContentTypes.CONTACT, state=Starting.phone)
             async def phone_number(message: types.Message, state: FSMContext):
@@ -164,47 +174,38 @@ async def bot_start(message: types.Message, state: FSMContext):
                     if args:
                         if user_id == int(ADMINS[0]):
                             await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>",
-                                                reply_markup=main_admin)
+                                                 reply_markup=main_admin)
                             await db.update_count(user_id=args)
                             await db.update_balance_count(user_id=args)
                             await bot.send_message(chat_id=args, text=f"<b>Tabriklaymiz siz taklif qilgan "
-                                "do'stingiz {mention} botimizga a'zo bo'ldi va sizga 200 so'm taqdim etildi👏</b>")
+                                                                      "do'stingiz {mention} botimizga a'zo bo'ldi va sizga 200 so'm taqdim etildi👏</b>")
                             await state.finish()
                         else:
                             await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>",
-                                                reply_markup=main)
+                                                 reply_markup=main)
                             await db.update_count(user_id=args)
                             await db.update_balance_count(user_id=args)
                             await bot.send_message(chat_id=args,
-                                            text=f"<b>Tabriklaymiz siz taklif qilgan do'stingiz {mention} "
-                                                    "botimizga a'zo bo'ldi va sizga 200 so'm taqdim etildi👏</b>")
+                                                   text=f"<b>Tabriklaymiz siz taklif qilgan do'stingiz {mention} "
+                                                        "botimizga a'zo bo'ldi va sizga 200 so'm taqdim etildi👏</b>")
                             await state.finish()
                     else:
                         if user_id == int(ADMINS[0]):
                             await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>",
-                                                reply_markup=main_admin)
+                                                 reply_markup=main_admin)
                             await state.finish()
                         else:
                             await message.answer("<b>Telefon raqamingiz muvaffaqiyatli kiritildi. ✅</b>",
-                                                reply_markup=main)
+                                                 reply_markup=main)
                             await state.finish()
                 else:
                     # Agar user malumoti bazada bo'lsa
                     try:
                         await message.answer("<b>Siz bloklandingiz. Botdan faqat O'zbekiston fuqarolari "
-                                            "foydalanishi mumkin❗️</b>", reply_markup=ReplyKeyboardRemove())
+                                             "foydalanishi mumkin❗️</b>", reply_markup=ReplyKeyboardRemove())
                         ban = await db.add_ban_user(user_id=message.from_user.id, phone=phone)
                         await state.finish()
                     except asyncpg.exceptions.UniqueViolationError:
                         await message.answer("<b>Siz bloklandingiz. Botdan faqat O'zbekiston fuqarolari "
-                                            "foydalanishi mumkin❗️</b>", reply_markup=ReplyKeyboardRemove())
+                                             "foydalanishi mumkin❗️</b>", reply_markup=ReplyKeyboardRemove())
                         await state.finish()
-        else:
-            if user_id == int(ADMINS[0]):
-                answer = f"{full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
-                await message.answer(text=answer, reply_markup=main_admin)
-                await state.finish()
-            else:
-                answer = f"{full_name}, siz uchun shart tayyor!\n\nBoshlash uchun «Pul ishlash» tugmasini bosing 👇"
-                await message.answer(text=answer, reply_markup=main)
-                await state.finish()
