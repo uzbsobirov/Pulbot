@@ -240,6 +240,10 @@ class Database:
         sql = "DELETE FROM Sponsor WHERE channel=$1"
         await self.execute(sql, channel, execute=True)
 
+    async def delete_user(self, user_id):
+        sql = "DELETE FROM Users WHERE user_id=$1"
+        await self.execute(sql, user_id, execute=True)
+
     async def drop_users(self):
         await self.execute("DROP TABLE Users", execute=True)
 

@@ -115,3 +115,10 @@ async def pul_qoshish(call: types.CallbackQuery, state: FSMContext):
     await call.message.answer(text="Foydalanuvchi bloklandi✅")
     await state.finish()
 
+@dp.callback_query_handler(text='deleteruser', state='*')
+async def delete_user(call: types.CallbackQuery, state: FSMContext):
+    user_id = call.message.text.split('\n')[2].split(': ')[1]
+    await call.message.delete()
+    await db.delete_user(user_id=int(user_id))
+    await call.message.answer(text="User is deleted")
+    await state.finish()
