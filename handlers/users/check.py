@@ -94,4 +94,7 @@ async def check_user_subs(call: types.CallbackQuery, state: FSMContext):
                         await state.finish()
     else:
         await call.message.delete()
-        await call.message.answer(f"<b>❌ Siz ba'zi kanallarimizdan chiqib ketdingiz\n\nIltimos qaytadan kanalga obuna bo'ling va chiqib ketmang ❗️\n\nAks holda konkursimizdan chetlatilasiz 😣</b>", disable_web_page_preview=True, reply_markup=result)
+        await call.message.answer(f"<b>❌ Siz ba'zi kanallarimizdan chiqib ketdingiz\n\n"
+                                  f"Iltimos qaytadan kanalga obuna bo'ling va chiqib ketmang ❗️\n\n"
+                                  f"Aks holda konkursimizdan chetlatilasiz 😣</b>", disable_web_page_preview=True,
+                                  reply_markup=result)
